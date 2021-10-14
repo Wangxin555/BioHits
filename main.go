@@ -27,7 +27,7 @@ func main() {
 
 	papers := FetchPaperInfo(keyWords, numPaper)
 
-	fmt.Println(searchOutput)
+	// fmt.Println(searchOutput)
 	if searchOutput {
 		outFile, err := os.Create(searchOutputFile)
 		if err != nil {
