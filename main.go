@@ -27,6 +27,10 @@ func main() {
 
 	papers := FetchPaperInfo(keyWords, numPaper)
 
+	sents := analyzePaperInfo(papers, true, 10)
+
+	fmt.Println(sents, len(sents))
+
 	// fmt.Println(searchOutput)
 	if searchOutput {
 		outFile, err := os.Create(searchOutputFile)
