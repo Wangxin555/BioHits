@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 )
 
 func main() {
@@ -29,22 +28,10 @@ func main() {
 
 	sents := analyzePaperInfo(papers, true, 10)
 
+	if searchOutput {
+		saveSearchResult(searchOutputFile, papers)
+	}
+
 	fmt.Println(sents, len(sents))
 
-	// fmt.Println(searchOutput)
-	if searchOutput {
-		outFile, err := os.Create(searchOutputFile)
-		if err != nil {
-			fmt.Println("Sorry: couldn’t create the file!")
-		}
-		defer outFile.Close()
-
-		fmt.Fprintln(outFile, "PMID"+"\t"+"Title"+"\t"+"Abstract")
-
-		for _, data := range papers {
-			fmt.Fprintln(outFile, data.PMID+"\t"+data.title+"\t",
-				data.abstract)
-		}
-		fmt.Println("Successfully write to txt file!")
-	}
 }
