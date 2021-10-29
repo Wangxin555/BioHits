@@ -5,10 +5,12 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 )
 
-func analyzePaperInfo(papers []Paper, includeTitle bool, numHits int) []string {
+// AnalyzePaperInfo takes in a list of papers and return top words based on word frequency
+func AnalyzePaperInfo(papers []Paper, includeTitle bool, numHits int) []string {
 	// split paragraphs into sentences
 	paperSentences := make([]string, 0)
 	if includeTitle {
@@ -35,7 +37,7 @@ func analyzePaperInfo(papers []Paper, includeTitle bool, numHits int) []string {
 	for _, sentence := range paperSentences {
 		currentWords := strings.Split(sentence, " ")
 		for _, word := range currentWords {
-			cleanedword := cleanWord(word)
+			cleanedword := CleanWord(word)
 			cleanedword = strings.ToLower(cleanedword)
 			if (!(StringInList(cleanedword, stopWords))) &&
 				len([]rune(cleanedword)) != 0 {
@@ -59,16 +61,19 @@ func RemoveSpecialChar(s string) string {
 
 // cleanWord function removes all white space in a string
 // also remove "," and "." anchored at the beginning or the end of a string
-func cleanWord(s string) string {
+// and remove ";" and ":" anchored at the beginning or the end of a string
+func CleanWord(s string) string {
 	wsChar := regexp.MustCompile(`\s`)
 	commaChar := regexp.MustCompile(`^,|,$`)
 	dotChar := regexp.MustCompile(`^\.|\.$`)
 	semicolonChar := regexp.MustCompile(`^;|;$`)
+	colonChar := regexp.MustCompile(`^:|:$`)
 	s1 := wsChar.ReplaceAllString(s, "")
 	s2 := commaChar.ReplaceAllString(s1, "")
 	s3 := dotChar.ReplaceAllString(s2, "")
 	s4 := semicolonChar.ReplaceAllString(s3, "")
-	return s4
+	s5 := colonChar.ReplaceAllString(s4, "")
+	return s5
 }
 
 // StringInList function returns whether a string is in a list
@@ -100,7 +105,7 @@ func ReadStopWords(filename string) []string {
 }
 
 // get frequencies of a list of strings
-func getWordFreq(words []string) (wordFreq map[string]int) {
+func GetWordFreq(words []string) (wordFreq map[string]int) {
 	wordFreq = make(map[string]int)
 	if len(words) == 1 {
 		wordFreq[words[0]] = 1
@@ -118,5 +123,51 @@ func getWordFreq(words []string) (wordFreq map[string]int) {
 			}
 		}
 		return wordFreq
+	}
+}
+
+// DeepClean further process the words to get useful information
+func DeepClean(words []string) []string {
+	/*
+		k := make([]string, 0)
+	*/
+	return k
+}
+
+//
+func GetTopWords(wordFreq map[string]int, num int) []string {
+	// create a list to store top words
+	topWords := make([]string, num)
+	values := make([]int, len(wordFreq))
+	// find top words based on the word frequency
+	for _, v := range wordFreq {
+		values = append(values, v)
+	}
+	// sort values in increasing order
+	sort.Ints(values)
+
+	// get words with top frequencies
+	topFreq := values[len(values)-num:]
+
+	for w := range wordFreq {
+		if IntinList(wordFreq[w], topFreq) {
+			topWords = append(topWords, w)
+		}
+	}
+
+	return topWords
+}
+
+// IntinList determines whether an int is in a list or not
+func IntinList(i int, ints []int) bool {
+	if len(ints) == 0 {
+		return false
+	} else {
+		for item := range ints {
+			if i == ints[item] {
+				return true
+			}
+		}
+		return false
 	}
 }
