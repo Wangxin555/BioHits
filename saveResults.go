@@ -6,7 +6,7 @@ import (
 )
 
 // export the search results in a txt file
-func saveSearchResult(filename string, papers []Paper) {
+func SaveSearchResult(filename string, papers []Paper) {
 	outFile, err := os.Create(filename)
 	if err != nil {
 		fmt.Println("Sorry: couldn’t create the file!")
