@@ -30,10 +30,12 @@ func main() {
 
 	wf := GetWordFreq(words)
 
+	topWords := GetTopWords(wf, 12)
+
 	if searchOutput {
 		SaveSearchResult(searchOutputFile, papers)
 	}
 
-	fmt.Println(wf)
+	fmt.Println(topWords)
 
 }
