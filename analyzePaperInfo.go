@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -45,7 +46,7 @@ func AnalyzePaperInfo(papers []Paper, includeTitle bool, numHits int) []string {
 			}
 		}
 	}
-
+	infoWords = DeepClean(infoWords)
 	return infoWords
 }
 
@@ -59,8 +60,8 @@ func RemoveSpecialChar(s string) string {
 	return s2
 }
 
-// cleanWord function removes all white space in a string
-// also remove "," and "." anchored at the beginning or the end of a string
+// cleanWord function removes all special characters in a string
+// including "," and "." anchored at the beginning or the end of a string
 // and remove ";" and ":" anchored at the beginning or the end of a string
 func CleanWord(s string) string {
 	wsChar := regexp.MustCompile(`\s`)
@@ -68,12 +69,26 @@ func CleanWord(s string) string {
 	dotChar := regexp.MustCompile(`^\.|\.$`)
 	semicolonChar := regexp.MustCompile(`^;|;$`)
 	colonChar := regexp.MustCompile(`^:|:$`)
+	parenthesesLeft := regexp.MustCompile(`^\(|\($`)
+	parenthesesRight := regexp.MustCompile(`^\)|\)$`)
+	quotationChar := regexp.MustCompile(`^\"|\"$`)
+	bracketLeft := regexp.MustCompile(`^\[|\[$`)
+	bracketRight := regexp.MustCompile(`^\]|\]$`)
+	bparenthesesLeft := regexp.MustCompile(`^\{|\{$`)
+	bparenthesesRight := regexp.MustCompile(`^\}|\}$`)
 	s1 := wsChar.ReplaceAllString(s, "")
 	s2 := commaChar.ReplaceAllString(s1, "")
 	s3 := dotChar.ReplaceAllString(s2, "")
 	s4 := semicolonChar.ReplaceAllString(s3, "")
 	s5 := colonChar.ReplaceAllString(s4, "")
-	return s5
+	s6 := parenthesesLeft.ReplaceAllString(s5, "")
+	s7 := parenthesesRight.ReplaceAllString(s6, "")
+	s8 := quotationChar.ReplaceAllString(s7, "")
+	s9 := bracketLeft.ReplaceAllString(s8, "")
+	s10 := bracketRight.ReplaceAllString(s9, "")
+	s11 := bparenthesesLeft.ReplaceAllString(s10, "")
+	s12 := bparenthesesRight.ReplaceAllString(s11, "")
+	return s12
 }
 
 // StringInList function returns whether a string is in a list
@@ -128,17 +143,29 @@ func GetWordFreq(words []string) (wordFreq map[string]int) {
 
 // DeepClean further process the words to get useful information
 func DeepClean(words []string) []string {
-	/*
-		k := make([]string, 0)
-	*/
-	return k
+	// remove string that does not contain any character from a to z
+	letters := regexp.MustCompile(`[a-z]`)
+	cleanedWords := words
+	for i := range words {
+		stringWithLetter := letters.FindAllString(words[i], -1)
+		if len(stringWithLetter) == 0 {
+			cleanedWords[i] = ""
+		}
+	}
+	return cleanedWords
 }
 
-//
+// GetTopWords returns the top num words in a word map
 func GetTopWords(wordFreq map[string]int, num int) []string {
+	// warn if the number of words in word map is less than the number that user requires
+	if len(wordFreq)-1 < num {
+		fmt.Printf("Warning: You want top %d words but only %d words detected.\n",
+			num, len(wordFreq)-1)
+		fmt.Printf("So we will return you %d top words instead.", len(wordFreq)-1)
+	}
 	// create a list to store top words
-	topWords := make([]string, num)
-	values := make([]int, len(wordFreq))
+	topWords := make([]string, 0)
+	values := make([]int, 0)
 	// find top words based on the word frequency
 	for _, v := range wordFreq {
 		values = append(values, v)
