@@ -9,7 +9,7 @@ import (
 func SaveSearchResult(filename string, papers []Paper) {
 	outFile, err := os.Create(filename)
 	if err != nil {
-		fmt.Println("Sorry: couldn’t create the file!")
+		panic("Sorry: cannot create the file!")
 	}
 	defer outFile.Close()
 
