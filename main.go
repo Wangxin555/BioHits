@@ -26,11 +26,11 @@ func main() {
 
 	papers := FetchPaperInfo(keyWords, numPaper)
 
-	words := AnalyzePaperInfo(papers, true, 10)
+	words := AnalyzePaperInfo(papers, true, true, 10)
 
 	wf := GetWordFreq(words)
 
-	topWords := GetTopWords(wf, 12)
+	topWords := GetTopWords(wf, 30)
 
 	if searchOutput {
 		SaveSearchResult(searchOutputFile, papers)
