@@ -11,7 +11,7 @@ import (
 )
 
 // AnalyzePaperInfo takes in a list of papers and return top words based on word frequency
-func AnalyzePaperInfo(papers []Paper, includeTitle bool, numHits int) []string {
+func AnalyzePaperInfo(papers []Paper, includeTitle, ignoreWord bool, numHits int) []string {
 	// split paragraphs into sentences
 	paperSentences := make([]string, 0)
 	if includeTitle {
@@ -46,7 +46,7 @@ func AnalyzePaperInfo(papers []Paper, includeTitle bool, numHits int) []string {
 			}
 		}
 	}
-	infoWords = DeepClean(infoWords)
+	infoWords = DeepClean(infoWords, ignoreWord)
 	return infoWords
 }
 
@@ -72,6 +72,7 @@ func CleanWord(s string) string {
 	parenthesesLeft := regexp.MustCompile(`^\(|\($`)
 	parenthesesRight := regexp.MustCompile(`^\)|\)$`)
 	quotationChar := regexp.MustCompile(`^\"|\"$`)
+	apostropheChar := regexp.MustCompile(`^\'|\'$`)
 	bracketLeft := regexp.MustCompile(`^\[|\[$`)
 	bracketRight := regexp.MustCompile(`^\]|\]$`)
 	bparenthesesLeft := regexp.MustCompile(`^\{|\{$`)
@@ -84,11 +85,12 @@ func CleanWord(s string) string {
 	s6 := parenthesesLeft.ReplaceAllString(s5, "")
 	s7 := parenthesesRight.ReplaceAllString(s6, "")
 	s8 := quotationChar.ReplaceAllString(s7, "")
-	s9 := bracketLeft.ReplaceAllString(s8, "")
-	s10 := bracketRight.ReplaceAllString(s9, "")
-	s11 := bparenthesesLeft.ReplaceAllString(s10, "")
-	s12 := bparenthesesRight.ReplaceAllString(s11, "")
-	return s12
+	s9 := apostropheChar.ReplaceAllString(s8, "")
+	s10 := bracketLeft.ReplaceAllString(s9, "")
+	s11 := bracketRight.ReplaceAllString(s10, "")
+	s12 := bparenthesesLeft.ReplaceAllString(s11, "")
+	s13 := bparenthesesRight.ReplaceAllString(s12, "")
+	return s13
 }
 
 // StringInList function returns whether a string is in a list
@@ -120,7 +122,10 @@ func ReadStopWords(filename string) []string {
 }
 
 // get frequencies of a list of strings
-func GetWordFreq(words []string) (wordFreq map[string]int) {
+func GetWordFreq(oriWords []string) (wordFreq map[string]int) {
+	// remove all empty strings in words list
+	words := RemoveEmptyString(oriWords)
+	// create a map to store words and their frequencies
 	wordFreq = make(map[string]int)
 	if len(words) == 1 {
 		wordFreq[words[0]] = 1
@@ -142,16 +147,29 @@ func GetWordFreq(words []string) (wordFreq map[string]int) {
 }
 
 // DeepClean further process the words to get useful information
-func DeepClean(words []string) []string {
+func DeepClean(words []string, ignoreWords bool) []string {
 	// remove string that does not contain any character from a to z
 	letters := regexp.MustCompile(`[a-z]`)
 	cleanedWords := words
-	for i := range words {
-		stringWithLetter := letters.FindAllString(words[i], -1)
-		if len(stringWithLetter) == 0 {
-			cleanedWords[i] = ""
+
+	// read words to be ignored
+	if ignoreWords {
+		ignoreWords := ReadStopWords("ignorewords.txt")
+		for i := range words {
+			stringWithLetter := letters.FindAllString(words[i], -1)
+			if len(stringWithLetter) == 0 || StringInList(words[i], ignoreWords) {
+				cleanedWords[i] = ""
+			}
+		}
+	} else {
+		for i := range words {
+			stringWithLetter := letters.FindAllString(words[i], -1)
+			if len(stringWithLetter) == 0 {
+				cleanedWords[i] = ""
+			}
 		}
 	}
+
 	return cleanedWords
 }
 
@@ -197,4 +215,15 @@ func IntinList(i int, ints []int) bool {
 		}
 		return false
 	}
+}
+
+// RemoveEmptyString removes empty strings "" for a given list of strings
+func RemoveEmptyString(words []string) []string {
+	var cleanedWords []string
+	for _, word := range words {
+		if word != "" {
+			cleanedWords = append(cleanedWords, word)
+		}
+	}
+	return cleanedWords
 }
