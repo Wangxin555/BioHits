@@ -227,3 +227,12 @@ func RemoveEmptyString(words []string) []string {
 	}
 	return cleanedWords
 }
+
+// GetKeys function returns keys of a map
+func GetKeys(m map[string]int) []string {
+	keys := make([]string, 0)
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
+}
