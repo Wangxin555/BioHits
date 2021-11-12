@@ -24,7 +24,6 @@ role
 however
 total
 test
-t
 among
 high
 low
@@ -35,3 +34,14 @@ factor
 factors
 including
 methods
+showed
+conclusion
+associated
+compare
+compared
+include
+included
+higher
+t
+finding
+findings
