@@ -30,7 +30,9 @@ func main() {
 
 	wf := GetWordFreq(words)
 
-	topWords := GetTopWords(wf, 30)
+	wf_clean := HandlePlural(wf)
+
+	topWords := GetTopWords(wf_clean, 30)
 
 	if searchOutput {
 		SaveSearchResult(searchOutputFile, papers)
