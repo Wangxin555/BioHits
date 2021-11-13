@@ -30,7 +30,7 @@ func main() {
 
 	wf := GetWordFreq(words)
 
-	wf_clean := HandlePlural(wf)
+	wf_clean := WordTransform(wf)
 
 	topWords := GetTopWords(wf_clean, 30)
 
