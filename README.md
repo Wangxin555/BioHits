@@ -1,6 +1,6 @@
 <div  align="left">   
 
-<img src="https://github.com/Wangxin555/BioHits/blob/dev/Logo.png" height="200" width="300" alt = "BioHits logo"/>
+<img src="https://github.com/Wangxin555/BioHits/blob/dev/Logo.png" height="120" width="200" alt = "BioHits logo"/>
 
 </div>
 
