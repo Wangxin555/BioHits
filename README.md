@@ -1,3 +1,9 @@
+<div  align="left">   
+
+<img src="https://github.com/Wangxin555/BioHits/blob/dev/Logo.png" height="500" width="600" alt = "BioHits logo"/>
+
+</div>
+
 # BioHits
 A Go toolkit for finding hot topics in biological and medical field.
 
