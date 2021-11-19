@@ -1,4 +1,4 @@
-package main
+package BioHits
 
 import (
 	"fmt"
@@ -124,7 +124,7 @@ func FetchPaperInfo(keywords string, numPaper int) []Paper {
 		// visit different pages each time
 		for i := 1; i < numPage+1; i++ {
 			fmt.Printf("Scraping page : %d\n", i)
-			contentCollector.Visit("https://pubmed.ncbi.nlm.nih.gov/trending/?page=" +
+			contentCollector.Visit("https://pubmed.ncbi.nlm.nih.gov/trending/?sort=date&page=" +
 				strconv.Itoa(i))
 		}
 		log.Print(contentCollector)
@@ -143,7 +143,7 @@ func FetchPaperInfo(keywords string, numPaper int) []Paper {
 		for i := 1; i < numPage+1; i++ {
 			fmt.Printf("Scraping page : %d\n", i)
 			contentCollector.Visit("https://pubmed.ncbi.nlm.nih.gov/?term=" +
-				joinedWords + "&page=" + strconv.Itoa(i))
+				joinedWords + "&sort=date&page=" + strconv.Itoa(i))
 		}
 		log.Print(contentCollector)
 	}
