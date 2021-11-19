@@ -1,4 +1,4 @@
-package main
+package BioHits
 
 import (
 	"bufio"
@@ -31,7 +31,7 @@ func AnalyzePaperInfo(papers []Paper, includeTitle, ignoreWord bool, numHits int
 	}
 
 	// read stop words from txt file
-	stopWords := ReadStopWords("stopwords.txt")
+	stopWords := ReadStopWords("./stopwords/stopwords.txt")
 
 	// turn sentences into strings
 	infoWords := make([]string, 0)
@@ -154,7 +154,7 @@ func DeepClean(words []string, ignoreWords bool) []string {
 
 	// read words to be ignored
 	if ignoreWords {
-		ignoreWords := ReadStopWords("ignorewords.txt")
+		ignoreWords := ReadStopWords("./stopwords/ignorewords.txt")
 		for i := range words {
 			stringWithLetter := letters.FindAllString(words[i], -1)
 			if len(stringWithLetter) == 0 || StringInList(words[i], ignoreWords) {
