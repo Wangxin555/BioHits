@@ -1,6 +1,7 @@
 package BioHits
 
 import (
+	"fmt"
 	"image/color"
 	"image/png"
 	"os"
@@ -9,12 +10,12 @@ import (
 )
 
 // drawWordCloud function draws a word cloud image for a word frequency map
-func drawWordCloud(wordFreq map[string]int, filename, fontFile string) {
+func DrawWordCloud(wordFreq map[string]int, filename, fontFile string) {
 	colorsRGBA := []color.RGBA{
-		{0, 109, 91, 0xff},
-		{255, 255, 240, 0xff},
-		{255, 127, 80, 0xff},
-		{160, 175, 183, 0xff},
+		{136, 202, 94, 255},
+		{66, 151, 160, 255},
+		{229, 127, 132, 255},
+		{47, 80, 97, 255},
 	}
 	colors := make([]color.Color, 0)
 	for _, c := range colorsRGBA {
@@ -39,7 +40,7 @@ func drawWordCloud(wordFreq map[string]int, filename, fontFile string) {
 	// Encode to `PNG` with `DefaultCompression` level
 	// then save to file
 	err = png.Encode(f, img)
-	//fmt.Println("here")
+	fmt.Print("WordCloud image created!")
 	if err != nil {
 		panic("Cannot encode image to png.")
 	}
