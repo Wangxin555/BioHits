@@ -10,8 +10,13 @@ import (
 	"strings"
 )
 
-// AnalyzePaperInfo takes in a list of papers and return top words based on word frequency
-func AnalyzePaperInfo(papers []Paper, includeTitle, ignoreWord bool, numHits int) []string {
+// AnalyzePaperInfo takes in a list of papers and return a cleaned word map frequency
+// papers is a list of paper structs gotten from FetchPaperInfo function
+// includeTitle stands for whether to include paper title when analysis
+// ignoreWord controls whether ignore additional words other than stop words
+// ignoreWordsList and stopWordsList is the directory to ignore words and stop words
+func AnalyzePaperInfo(papers []Paper, includeTitle, ignoreWord bool,
+	stopWordsList, ignoreWordsList string) map[string]int {
 	// split paragraphs into sentences
 	paperSentences := make([]string, 0)
 	if includeTitle {
@@ -31,7 +36,7 @@ func AnalyzePaperInfo(papers []Paper, includeTitle, ignoreWord bool, numHits int
 	}
 
 	// read stop words from txt file
-	stopWords := ReadStopWords("./stopwords/stopwords.txt")
+	stopWords := ReadStopWords(stopWordsList)
 
 	// turn sentences into strings
 	infoWords := make([]string, 0)
@@ -46,8 +51,12 @@ func AnalyzePaperInfo(papers []Paper, includeTitle, ignoreWord bool, numHits int
 			}
 		}
 	}
-	infoWords = DeepClean(infoWords, ignoreWord)
-	return infoWords
+	infoWords = DeepClean(infoWords, ignoreWord, ignoreWordsList)
+
+	wordFrequency := GetWordFreq(infoWords)
+	wordFrequencyClean := WordTransform(wordFrequency)
+	//topWords := GetTopWords(wordFrequencyClean, numHits)
+	return wordFrequencyClean
 }
 
 // RemoveSpecialChar function removes \t and \n in a string
@@ -147,14 +156,14 @@ func GetWordFreq(oriWords []string) (wordFreq map[string]int) {
 }
 
 // DeepClean further process the words to get useful information
-func DeepClean(words []string, ignoreWords bool) []string {
+func DeepClean(words []string, ignoreWords bool, ignoreWordsList string) []string {
 	// remove string that does not contain any character from a to z
 	letters := regexp.MustCompile(`[a-z]`)
 	cleanedWords := words
 
 	// read words to be ignored
 	if ignoreWords {
-		ignoreWords := ReadStopWords("./stopwords/ignorewords.txt")
+		ignoreWords := ReadStopWords(ignoreWordsList)
 		for i := range words {
 			stringWithLetter := letters.FindAllString(words[i], -1)
 			if len(stringWithLetter) == 0 || StringInList(words[i], ignoreWords) {
