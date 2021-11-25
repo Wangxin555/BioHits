@@ -5,11 +5,9 @@ import (
 	"strings"
 )
 
-// Function in this script aims to increase the precision of BioHits by
+// WordTransform function aims to increase the precision of BioHits by
 // 1. removing "s" or "es" in Plurals, which transforms them into singulars noun
 // 2. removing "ly" in adv, which transform them into a normal sense verb
-
-// WordTransform
 func WordTransform(wordFreq map[string]int) map[string]int {
 	allWords := GetKeys(wordFreq)
 	for w := range wordFreq {
@@ -20,6 +18,8 @@ func WordTransform(wordFreq map[string]int) map[string]int {
 			esChar := regexp.MustCompile(`es$`)
 			removeS := sChar.ReplaceAllString(w, "")
 			removeES := esChar.ReplaceAllString(w, "")
+			// set the frequency equals to 0 for singular
+			// if both pural and singular form of a word exist in the same list
 			if StringInList(removeS, allWords) {
 				wordFreq[removeS] += wordFreq[w]
 				wordFreq[w] = 0

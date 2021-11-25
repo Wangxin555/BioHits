@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// AnalyzePaperInfo takes in a list of papers and return a cleaned word map frequency
+// AnalyzePaperInfo takes in a list of papers and returns a cleaned word map frequency
 // papers is a list of paper structs gotten from FetchPaperInfo function
 // includeTitle stands for whether to include paper title when analysis
 // ignoreWord controls whether ignore additional words other than stop words
@@ -19,6 +19,7 @@ func AnalyzePaperInfo(papers []Paper, includeTitle, ignoreWord bool,
 	stopWordsList, ignoreWordsList string) map[string]int {
 	// split paragraphs into sentences
 	paperSentences := make([]string, 0)
+	// user can include the title in analysis
 	if includeTitle {
 		for i := range papers {
 			processedAbstract := RemoveSpecialChar(papers[i].abstract)
@@ -36,12 +37,18 @@ func AnalyzePaperInfo(papers []Paper, includeTitle, ignoreWord bool,
 	}
 
 	// read stop words from txt file
-	stopWords := ReadStopWords(stopWordsList)
+	// user can use the stopwords.txt provided by BioHits,
+	// or use a customized txt file as an input
+	stopWords := ReadWordsList(stopWordsList)
 
 	// turn sentences into strings
 	infoWords := make([]string, 0)
 	for _, sentence := range paperSentences {
 		currentWords := strings.Split(sentence, " ")
+		// clean every word before creating a map
+		// including removing all special symbols in each word,
+		// transform uppercase letter into lowercase letters
+		// and discard words in stopwords.txt
 		for _, word := range currentWords {
 			cleanedword := CleanWord(word)
 			cleanedword = strings.ToLower(cleanedword)
@@ -51,11 +58,13 @@ func AnalyzePaperInfo(papers []Paper, includeTitle, ignoreWord bool,
 			}
 		}
 	}
+	// wash words deeply by removing ignored words and words with no letters
 	infoWords = DeepClean(infoWords, ignoreWord, ignoreWordsList)
 
 	wordFrequency := GetWordFreq(infoWords)
+	// handle plurals and adverbs in wordTransform function
 	wordFrequencyClean := WordTransform(wordFrequency)
-	//topWords := GetTopWords(wordFrequencyClean, numHits)
+
 	return wordFrequencyClean
 }
 
@@ -63,15 +72,15 @@ func AnalyzePaperInfo(papers []Paper, includeTitle, ignoreWord bool,
 func RemoveSpecialChar(s string) string {
 	tabChar := regexp.MustCompile(`\t`)
 	newlineChar := regexp.MustCompile(`\n`)
-	// word := "what \t is\n"
 	s1 := tabChar.ReplaceAllString(s, "")
 	s2 := newlineChar.ReplaceAllString(s1, "")
 	return s2
 }
 
 // cleanWord function removes all special characters in a string
-// including "," and "." anchored at the beginning or the end of a string
-// and remove ";" and ":" anchored at the beginning or the end of a string
+// including "," and "." anchored at the beginning or the end of a string,
+// ";" and ":" anchored at the beginning or the end of a string
+// and any form of parentheses and brackets
 func CleanWord(s string) string {
 	wsChar := regexp.MustCompile(`\s`)
 	commaChar := regexp.MustCompile(`^,|,$`)
@@ -86,6 +95,8 @@ func CleanWord(s string) string {
 	bracketRight := regexp.MustCompile(`^\]|\]$`)
 	bparenthesesLeft := regexp.MustCompile(`^\{|\{$`)
 	bparenthesesRight := regexp.MustCompile(`^\}|\}$`)
+
+	// remove special character
 	s1 := wsChar.ReplaceAllString(s, "")
 	s2 := commaChar.ReplaceAllString(s1, "")
 	s3 := dotChar.ReplaceAllString(s2, "")
@@ -112,8 +123,8 @@ func StringInList(s string, list []string) bool {
 	return false
 }
 
-// read stop words from txt file
-func ReadStopWords(filename string) []string {
+// read words list from txt file and store in a list
+func ReadWordsList(filename string) []string {
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -130,9 +141,9 @@ func ReadStopWords(filename string) []string {
 	return stopWords
 }
 
-// get frequencies of a list of strings
+// get word frequencies of a list of strings
 func GetWordFreq(oriWords []string) (wordFreq map[string]int) {
-	// remove all empty strings in words list
+	// remove all empty words in words list
 	words := RemoveEmptyString(oriWords)
 	// create a map to store words and their frequencies
 	wordFreq = make(map[string]int)
@@ -156,6 +167,7 @@ func GetWordFreq(oriWords []string) (wordFreq map[string]int) {
 }
 
 // DeepClean further process the words to get useful information
+// including removing words with no letters or listed in ignoreWordsList
 func DeepClean(words []string, ignoreWords bool, ignoreWordsList string) []string {
 	// remove string that does not contain any character from a to z
 	letters := regexp.MustCompile(`[a-z]`)
@@ -163,9 +175,11 @@ func DeepClean(words []string, ignoreWords bool, ignoreWordsList string) []strin
 
 	// read words to be ignored
 	if ignoreWords {
-		ignoreWords := ReadStopWords(ignoreWordsList)
+		ignoreWords := ReadWordsList(ignoreWordsList)
 		for i := range words {
 			stringWithLetter := letters.FindAllString(words[i], -1)
+			// set a word to empty if it has no letters in it
+			// or it shows in ignoredWordList
 			if len(stringWithLetter) == 0 || StringInList(words[i], ignoreWords) {
 				cleanedWords[i] = ""
 			}

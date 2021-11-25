@@ -65,6 +65,7 @@ func FetchPaperInfo(keywords string, numPaper int) []Paper {
 		paperPMID := regularMatch.FindAllString(paperPMIDString, -1)[0]
 		paperAbstract := GetAbstract(paperPMIDString)
 
+		// store paper information as a paper object and append it to the list
 		paper := Paper{
 			PMID:     paperPMID,
 			title:    paperTitle,

@@ -2,11 +2,10 @@ package BioHits
 
 import (
 	"fmt"
+	"github.com/psykhi/wordclouds"
 	"image/color"
 	"image/png"
 	"os"
-
-	"github.com/psykhi/wordclouds"
 )
 
 // drawWordCloud function draws a word cloud image for a word frequency map
@@ -17,6 +16,7 @@ func DrawWordCloud(wordFreq map[string]int, filename, fontFile string) {
 		{229, 127, 132, 255},
 		{47, 80, 97, 255},
 	}
+	// set colors
 	colors := make([]color.Color, 0)
 	for _, c := range colorsRGBA {
 		colors = append(colors, c)
