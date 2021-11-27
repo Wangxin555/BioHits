@@ -149,6 +149,6 @@ func FetchPaperInfo(keywords string, numPaper int) []Paper {
 	}
 
 	//log.Print("Complete fetching data!\n")
-	fmt.Println("Complete fetching data!")
+	fmt.Println("Successfully fetched data!")
 	return Papers
 }

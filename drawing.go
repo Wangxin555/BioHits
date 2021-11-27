@@ -2,10 +2,11 @@ package BioHits
 
 import (
 	"fmt"
-	"github.com/psykhi/wordclouds"
 	"image/color"
 	"image/png"
 	"os"
+
+	"github.com/psykhi/wordclouds"
 )
 
 // drawWordCloud function draws a word cloud image for a word frequency map
@@ -40,7 +41,7 @@ func DrawWordCloud(wordFreq map[string]int, filename, fontFile string) {
 	// Encode to `PNG` with `DefaultCompression` level
 	// then save to file
 	err = png.Encode(f, img)
-	fmt.Print("WordCloud image created!")
+	fmt.Print("Successfully generated WordCloud image!")
 	if err != nil {
 		panic("Cannot encode image to png.")
 	}
