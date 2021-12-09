@@ -67,5 +67,8 @@ Because BioHits is built as a package, it is better if we test it by importing i
 ## Author and Maintainer
 Xin Wang, xinwang3@andrew.cmu.edu, Carnegie Mellon University
 
+## Issues
+If you have any question, please post an issue at [here](https://github.com/Wangxin555/BioHits/issues)
+
 ## Copyright
 Copyright © 2021. Xin Wang. All Rights Reserved<br/>
