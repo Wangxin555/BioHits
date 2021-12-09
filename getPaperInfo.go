@@ -2,7 +2,6 @@ package BioHits
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"regexp"
 	"strconv"
@@ -66,6 +65,7 @@ func FetchPaperInfo(keywords string, numPaper int) []Paper {
 		paperPMID := regularMatch.FindAllString(paperPMIDString, -1)[0]
 		paperAbstract := GetAbstract(paperPMIDString)
 
+		// store paper information as a paper object and append it to the list
 		paper := Paper{
 			PMID:     paperPMID,
 			title:    paperTitle,
@@ -127,7 +127,7 @@ func FetchPaperInfo(keywords string, numPaper int) []Paper {
 			contentCollector.Visit("https://pubmed.ncbi.nlm.nih.gov/trending/?sort=date&page=" +
 				strconv.Itoa(i))
 		}
-		log.Print(contentCollector)
+		//log.Print(contentCollector)
 
 	} else {
 
@@ -145,9 +145,10 @@ func FetchPaperInfo(keywords string, numPaper int) []Paper {
 			contentCollector.Visit("https://pubmed.ncbi.nlm.nih.gov/?term=" +
 				joinedWords + "&sort=date&page=" + strconv.Itoa(i))
 		}
-		log.Print(contentCollector)
+		//log.Print(contentCollector)
 	}
 
-	log.Print("Complete fetching data!\n")
+	//log.Print("Complete fetching data!\n")
+	fmt.Println("Successfully fetched data!")
 	return Papers
 }
